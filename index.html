@@ -613,7 +613,7 @@ td, .alloc-num, .floor-empty, .floor-used, .stat-value {
       return isNaN(num) ? 0 : num;
     }
 
-    function parseUsd(value){
+    function parseVND(value){
       if (value === undefined || value === null) return 0;
       const cleaned = String(value).replace(/[^\d.\-]/g, "");
       const num = parseFloat(cleaned);
