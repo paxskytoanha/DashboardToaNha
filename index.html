@@ -683,7 +683,7 @@ td, .alloc-num, .floor-empty, .floor-used, .stat-value {
           areaEmpty,
           areaUsed,
           price: parseUsd(getFlexible(r, "gia m2", "gia/m2", "price")),
-          promo: parseUsd(getFlexible(r, "ty gia usd theo ngay", "ty gia usd", "ty gia", "khuyen mai", "promo")),
+          promo: parseVND(getFlexible(r, "ty gia usd theo ngay", "ty gia usd", "ty gia", "khuyen mai", "promo")),
           fee: parseUsd(getFlexible(r, "phi quan ly", "phi", "fee")),
           rent: parseNumber(rentRaw),
           rentRaw,
