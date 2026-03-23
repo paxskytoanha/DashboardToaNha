@@ -563,7 +563,7 @@ td, .alloc-num, .floor-empty, .floor-used, .stat-value {
               <th>DT trống</th>
               <th>DT đã thuê</th>
               <th>Đơn giá/m²</th>
-              <th>Ưu đãi</th>
+              <th>Tỷ giá USD theo ngày 1USD</th>
               <th>Phí dịch vụ</th>
               <th>Giá thuê</th>
               <th>Trạng thái</th>
@@ -683,7 +683,7 @@ td, .alloc-num, .floor-empty, .floor-used, .stat-value {
           areaEmpty,
           areaUsed,
           price: parseUsd(getFlexible(r, "gia m2", "gia/m2", "price")),
-          promo: parseUsd(getFlexible(r, "uu dai", "khuyen mai", "promo")),
+          promo: parseUsd(getFlexible(r, "ty gia USD theo ngay 1USD/23.03.2026", "khuyen mai", "promo")),
           fee: parseUsd(getFlexible(r, "phi quan ly", "phi", "fee")),
           rent: parseNumber(rentRaw),
           rentRaw,
@@ -739,7 +739,7 @@ td, .alloc-num, .floor-empty, .floor-used, .stat-value {
         render(raw);
 
         const rentMissing = raw.filter(x => x.rent === 0 && String(x.rentRaw || "").trim() !== "");
-        if (rentMissing.length) showError("Một số dòng vẫn chưa đọc được Giá thuê. Hãy kiểm tra lại định dạng dữ liệu ở sheet.");
+        if (rentMissing.length) showError("Một số dòng bị lỗi. Hãy kiểm tra lại định dạng dữ liệu ở sheet.");
       }catch(err){
         console.error(err);
         showError("Không đọc được dữ liệu. Hãy kiểm tra lại sheet hoặc link OpenSheet.");
