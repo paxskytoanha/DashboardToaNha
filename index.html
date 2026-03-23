@@ -749,7 +749,7 @@ td, .alloc-num, .floor-empty, .floor-used, .stat-value {
 
     function renderBuildingInfo(rows){
       const selected = document.getElementById("buildingFilter").value;
-      const buildingName = selected ? formatBuildingName(selected) : "Tổng diện tích các tòa nhà";
+      const buildingName = selected ? formatBuildingName(selected) : "Tổng diện tích các tòa";
       const totalArea = rows.reduce((sum, r) => sum + r.areaRent, 0);
       const noteRow = rows.find(r => r.note && r.note !== "-");
       const info = extractBuildingInfo(noteRow ? noteRow.note : "", totalArea);
