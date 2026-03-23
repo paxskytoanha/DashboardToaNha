@@ -1016,7 +1016,7 @@ td, .alloc-num, .floor-empty, .floor-used, .stat-value {
               <td>${r.areaEmpty ? r.areaEmpty.toLocaleString("vi-VN") : "-"}</td>
               <td>${r.areaUsed ? r.areaUsed.toLocaleString("vi-VN") : "0"}</td>
               <td>${r.price ? formatUSD(r.price) : "-"}</td>
-              <td class="promo">${r.promo ? r.promo.toLocaleString("vi-VN") + " VND" : "-"}</td>
+              <td class="promo">${r.promo ? formatUSD(r.promo) : "-"}</td>
               <td>${r.fee ? formatUSD(r.fee) : "-"}</td>
               <td>${r.rent ? formatVND(r.rent) : "-"}</td>
               <td class="${statusClass}">${r.status}</td>
