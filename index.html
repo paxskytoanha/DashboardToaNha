@@ -1,0 +1,1622 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PaxSky Oview Dashboard Plus</title>
+  <style>
+    * { box-sizing: border-box; }
+    :root{
+      --bg:#eef3f8;
+      --surface:#ffffff;
+      --surface-2:#f8fbff;
+      --line:#dbe6f2;
+      --text:#0f172a;
+      --muted:#64748b;
+      --primary:#2563eb;
+      --primary-2:#60a5fa;
+      --empty:#fb923c;
+      --empty-2:#ea580c;
+      --used:#22c55e;
+      --used-2:#15803d;
+      --shadow:0 18px 40px rgba(15,23,42,.08);
+      --radius:20px;
+    }
+    body{
+      margin:0;
+      font-family:"Segoe UI", Arial, sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(96,165,250,.16), transparent 28%),
+        radial-gradient(circle at top right, rgba(34,197,94,.10), transparent 22%),
+        linear-gradient(180deg,#eef3f8 0%, #f8fbff 100%);
+      color:var(--text);
+    }
+    .container{max-width:1760px;margin:0 auto;padding:22px;}
+    .header{
+      display:flex;justify-content:space-between;align-items:flex-start;
+      gap:16px;margin-bottom:20px;flex-wrap:wrap;position:relative;
+    }
+    .header::after{
+      content:"";position:absolute;left:0;bottom:-10px;width:220px;height:5px;
+      border-radius:999px;background:linear-gradient(90deg,var(--primary),var(--primary-2));
+      box-shadow:0 6px 16px rgba(37,99,235,.2);
+    }
+    .brand{display:flex;align-items:center;gap:12px;min-width:0;flex:1 1 auto;}
+    .brand-icon{
+      	width:50px;
+  	height:60px;
+  	border-radius:10px;
+  	display:flex;
+  	align-items:center;
+  	justify-content:center;
+  	overflow:hidden;
+  	background:#fff;
+    		}
+    .title{min-width:0;flex:1 1 auto;}
+    .title h1{margin:0 0 6px 0;font-size:34px;font-weight:900;letter-spacing:-.03em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+    .title p{margin:0;color:var(--muted);font-size:14px;line-height:1.5;}
+    .toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;}
+    select,button{
+      height:46px;padding:0 14px;border-radius:14px;border:1px solid #d5dfeb;
+      background:rgba(255,255,255,.96);font-size:14px;font-weight:700;
+      box-shadow:0 8px 18px rgba(15,23,42,.04);
+    }
+    select{min-width:220px;}
+    button{cursor:pointer;transition:.22s ease;}
+    button:hover{transform:translateY(-1px);box-shadow:0 12px 24px rgba(15,23,42,.09);}
+    .btn-primary{
+      background:linear-gradient(180deg,#3b82f6,#2563eb);
+      color:#fff;border-color:#2563eb;box-shadow:0 10px 22px rgba(37,99,235,.18);
+    }
+
+    .section{margin-bottom:18px;}
+    .kpi-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;}
+    .card,.panel,.table-panel,.chart-card{
+      background:linear-gradient(180deg,rgba(255,255,255,.98),rgba(248,251,255,.96));
+      backdrop-filter:blur(10px);
+      border:1px solid rgba(219,230,242,.95);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      padding:16px;
+      transition:.22s ease;
+    }
+    .card:hover,.panel:hover,.chart-card:hover{transform:translateY(-2px);}
+    .card .label{
+      color:var(--muted);font-size:12px;font-weight:600;text-transform:none;
+      letter-spacing:.05em;margin-bottom:10px;
+    }
+    .card .value{font-size:30px;font-weight:700;line-height:1;letter-spacing:-.02em;}
+    .kpi-primary{border-top:4px solid var(--primary);}
+    .kpi-empty{border-top:4px solid var(--empty);}
+    .kpi-used{border-top:4px solid var(--used);}
+    .kpi-neutral{border-top:4px solid #94a3b8;}
+
+    .panel-head{
+      display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;
+      margin-bottom:10px;
+    }
+    .panel-title{font-size:20px;font-weight:700;letter-spacing:-.01em;margin:0;}
+    .tag{
+      background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe;
+      font-size:12px;font-weight:600;border-radius:999px;padding:6px 10px;
+    }
+    .mini-note,.chart-note{color:var(--muted);font-size:12px;line-height:1.55;}
+
+    .building-info-grid{display:grid;grid-template-columns:2fr 1fr;gap:14px;}
+    .info-box{
+      background:linear-gradient(180deg,#ffffff,#f8fbff);
+      border:1px solid var(--line);border-radius:18px;padding:16px;min-height:100%;
+    }
+    .info-box .info-label{
+      color:var(--muted);font-size:12px;text-transform:none;font-weight:600;
+      letter-spacing:.05em;margin-bottom:8px;
+    }
+    .info-box .info-value{font-size:22px;font-weight:700;line-height:1.25;}
+    .info-box .info-sub{margin-top:8px;color:#475569;font-size:13px;line-height:1.5;}
+    .info-box.hero .info-value{font-size:26px;font-weight:700;}
+    .info-box.hero{border:1px solid #d7e5ff;background:linear-gradient(180deg,#ffffff,#f4f9ff);}
+
+    .dashboard-grid{display:grid;grid-template-columns:1.1fr .9fr .9fr;gap:14px;}
+    .building-stat{display:grid;grid-template-columns:190px 1fr 115px;gap:12px;align-items:center;margin-bottom:12px;}
+    .building-name{font-weight:500;font-size:14px;}
+    .bar-wrap{
+      width:100%;height:14px;background:#e6edf5;border-radius:999px;overflow:hidden;
+      box-shadow:inset 0 1px 2px rgba(15,23,42,.06);
+    }
+    .bar-fill{
+      height:100%;border-radius:999px;
+      background:linear-gradient(90deg,#2563eb,#60a5fa,#93c5fd);
+      box-shadow:0 0 14px rgba(59,130,246,.18);
+    }
+    .stat-value{text-align:right;font-size:13px;font-weight:900;}
+
+    .donut-wrap{display:flex;align-items:center;justify-content:center;min-height:240px;position:relative;}
+    .donut{
+      width:200px;height:200px;border-radius:50%;position:relative;
+      background:conic-gradient(var(--empty) 0% 0%, var(--used) 0% 100%);
+      box-shadow:inset 0 0 0 10px rgba(255,255,255,.25), 0 14px 26px rgba(15,23,42,.08);
+    }
+    .donut::after{
+      content:"";position:absolute;inset:34px;background:#fff;border-radius:50%;
+      box-shadow:inset 0 0 0 1px var(--line);
+    }
+    .donut-center{position:absolute;text-align:center;z-index:2;}
+    .donut-center .big{font-size:32px;font-weight:900;}
+    .legend{display:grid;gap:10px;margin-top:8px;}
+    .legend-item{
+      display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:14px;
+      background:var(--surface-2);border:1px solid var(--line);border-radius:14px;padding:10px 12px;
+    }
+    .legend-left{display:flex;align-items:center;gap:8px;font-weight:800;}
+    .dot{width:12px;height:12px;border-radius:999px;display:inline-block;}
+    .dot.empty{background:linear-gradient(180deg,var(--empty),var(--empty-2))}
+    .dot.other{background:linear-gradient(180deg,var(--used),var(--used-2))}
+    .dot.rent{background:linear-gradient(180deg,#3b82f6,#2563eb)}
+
+    .summary-grid{display:grid;gap:10px;}
+    .summary-item{
+      padding:14px;border-radius:16px;background:linear-gradient(180deg,#ffffff,#f8fbff);
+      border:1px solid var(--line);
+    }
+    .summary-item .s-label{
+      color:var(--muted);font-size:12px;text-transform:none;font-weight:600;
+      letter-spacing:.05em;margin-bottom:6px;
+    }
+    .summary-item .s-value{font-size:24px;font-weight:700;word-break:break-word;}
+
+    .advanced-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+    .alloc-legend{
+      display:flex;gap:14px;flex-wrap:wrap;margin-bottom:12px;color:#475569;
+      font-size:13px;font-weight:800;
+    }
+    .alloc-row{
+      display:grid;grid-template-columns:180px 1fr 95px 95px 95px;
+      gap:10px;align-items:center;margin-bottom:10px;
+    }
+    .alloc-name{font-weight:500;font-size:13px}
+    .stack-bar{
+      width:100%;height:18px;background:#e6edf5;border-radius:999px;overflow:hidden;display:flex;
+      box-shadow:inset 0 1px 2px rgba(15,23,42,.06);
+    }
+    .seg-rent{background:linear-gradient(180deg,#3b82f6,#2563eb)}
+    .seg-empty{background:linear-gradient(180deg,var(--empty),var(--empty-2))}
+    .seg-used{background:linear-gradient(180deg,var(--used),var(--used-2))}
+    .alloc-num{text-align:right;font-size:12px;font-weight:900;white-space:nowrap;}
+
+    .chart-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;}
+
+    .building-card{
+      border:1px solid var(--line);
+      border-radius:18px;
+      background:linear-gradient(180deg,#ffffff,#f8fbff);
+      overflow:hidden;
+      box-shadow:0 10px 24px rgba(15,23,42,.04);
+    }
+    .building-card-head{
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-start;
+      gap:12px;
+      padding:14px 16px;
+      cursor:pointer;
+      background:linear-gradient(180deg,#ffffff,#f6faff);
+      border-bottom:1px solid var(--line);
+    }
+    .building-card-head-right{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+    .building-card-toggle{
+      font-size:12px;
+      font-weight:600;
+      color:#1d4ed8;
+      background:#eff6ff;
+      border:1px solid #bfdbfe;
+      border-radius:999px;
+      padding:6px 12px;
+      white-space:nowrap;
+    }
+    .building-card-body{
+      max-height:0;
+      overflow:hidden;
+      opacity:0;
+      transition:max-height .35s ease, opacity .25s ease, padding .25s ease;
+      padding:0 16px;
+    }
+    .building-card-body.open{
+      opacity:1;
+      padding:0 16px 16px 16px;
+    }
+    .building-chart-title{font-size:16px;font-weight:500;margin-bottom:4px;}
+    .building-chart-sub{font-size:12px;color:var(--muted);margin-bottom:10px;}
+    .chart-legend{
+      display:flex;gap:16px;flex-wrap:wrap;margin-bottom:12px;font-size:13px;
+      color:#475569;font-weight:800;
+    }
+    .mini-kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px;}
+    .mini-kpi{
+      background:linear-gradient(180deg,#ffffff,#f8fbff);
+      border:1px solid var(--line);border-radius:14px;padding:10px;
+    }
+    .mini-kpi .mk-label{
+      font-size:11px;color:var(--muted);text-transform:none;font-weight:600;
+      letter-spacing:.05em;margin-bottom:5px;
+    }
+    .mini-kpi .mk-value{font-size:16px;font-weight:700;}
+    .floor-chart{display:grid;gap:10px;}
+    .floor-row{display:grid;grid-template-columns:80px 1fr 92px 92px 110px;gap:10px;align-items:center;}
+    .floor-name{font-weight:500;font-size:13px;}
+    .floor-bar{
+      height:18px;background:#e6edf5;border-radius:999px;overflow:hidden;display:flex;
+      box-shadow:inset 0 1px 2px rgba(15,23,42,.06);
+    }
+    .floor-fill-empty{background:linear-gradient(180deg,var(--empty),var(--empty-2));height:100%}
+    .floor-fill-used{background:linear-gradient(180deg,var(--used),var(--used-2));height:100%}
+    .floor-empty,.floor-used,.floor-rent{font-size:12px;font-weight:900;text-align:right;white-space:nowrap;}
+
+    .table-wrap{overflow:auto}
+    table{
+      width:100%;border-collapse:separate;border-spacing:0;min-width:1450px;overflow:hidden;border-radius:16px;
+    }
+    th,td{
+      border-right:1px solid #dbe3ee;border-bottom:1px solid #dbe3ee;padding:11px 12px;
+      text-align:center;vertical-align:middle;
+    }
+    th{
+      background:#eef2f7;font-size:13px;font-weight:900;text-transform:none;letter-spacing:.01em;
+      position:sticky;top:0;z-index:1;
+    }
+    thead th:first-child{border-top-left-radius:14px}
+    thead th:last-child{border-top-right-radius:14px;border-right:none}
+    tbody td:first-child, thead th:first-child{border-left:1px solid #dbe3ee}
+    td{background:#fff;font-size:14px}
+    tr:hover td{background:#f8fbff}
+    .building-row td{
+      background:linear-gradient(180deg,#dbeafe,#d8e5f6);
+      font-weight:600;font-size:15px;text-align:center;
+    }
+    .note-row td{
+      background:#f8fafc;text-align:left;white-space:normal;line-height:1.65;color:#334155;
+      font-size:14px;padding:12px 14px;
+    }
+    .status-empty{color:var(--empty-2);font-weight:900}
+    .status-other{color:var(--used-2);font-weight:900}
+    .promo{color:#dc2626;font-weight:900}
+    .muted{color:#94a3b8}
+
+    .floor-group{
+      margin-bottom:16px;
+      border:1px solid var(--line);
+      border-radius:16px;
+      background:linear-gradient(180deg,#ffffff,#f8fbff);
+      overflow:hidden;
+    }
+    .floor-group-header{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:12px;
+      padding:12px 14px;
+      cursor:pointer;
+      background:linear-gradient(180deg,#f8fbff,#eef5ff);
+      border-bottom:1px solid var(--line);
+    }
+    .floor-group-title{
+      font-size:14px;
+      font-weight:500;
+      color:#0f172a;
+    }
+    .floor-group-toggle{
+      font-size:12px;
+      font-weight:600;
+      color:#1d4ed8;
+      background:#eff6ff;
+      border:1px solid #bfdbfe;
+      border-radius:999px;
+      padding:6px 10px;
+      white-space:nowrap;
+    }
+    .floor-group-body{
+      padding:12px 12px 4px 12px;
+      max-height:0;
+      overflow:hidden;
+      opacity:0;
+      transition:max-height .35s ease, opacity .25s ease, padding .25s ease;
+    }
+    .floor-group-body.open{
+      opacity:1;
+      padding:12px 12px 4px 12px;
+    }
+    .footer-note{margin-top:12px;color:var(--muted);font-size:12px}
+    .error-box{
+      background:#fff7ed;border:1px solid #fdba74;color:#9a3412;padding:12px 14px;
+      border-radius:14px;margin-bottom:14px;display:none;white-space:pre-wrap;
+    }
+
+    @media print{
+      body{background:#fff}
+      .container{max-width:none;padding:0}
+      .toolbar,.footer-note,.error-box:empty{display:none!important}
+      .card,.panel,.table-panel,.chart-card,.filter-box{box-shadow:none}
+      button,select,input{display:none!important}
+      table{min-width:auto}
+    }
+    @media (max-width:1500px){
+      .building-info-grid{grid-template-columns:1fr 1fr}
+      .mini-kpi-row{grid-template-columns:repeat(2,1fr)}
+      .filter-grid{grid-template-columns:1fr 1fr 1fr;}
+    }
+    @media (max-width:1350px){
+      .dashboard-grid,.advanced-grid,.chart-grid{grid-template-columns:1fr}
+    }
+    @media (max-width:1100px){
+      .kpi-grid{grid-template-columns:repeat(2,1fr)}
+      .alloc-row{grid-template-columns:1fr}
+      .floor-row{grid-template-columns:60px 1fr 85px 85px}
+      .floor-rent{display:none}
+      .filter-grid{grid-template-columns:1fr 1fr;}
+    }
+    @media (max-width:800px){
+      .building-info-grid{grid-template-columns:1fr}
+      .mini-kpi-row{grid-template-columns:1fr}
+      .filter-grid{grid-template-columns:1fr;}
+    }
+    @media (max-width:700px){
+      .container{padding:10px}
+      .header{margin-bottom:14px}
+      .brand{gap:10px}
+      .brand-icon{width:40px;height:40px;flex:0 0 40px;border-radius:12px}
+      .title h1{font-size:16px;line-height:1.15;margin:0 0 4px 0}
+      .title p{font-size:11px;line-height:1.35}
+      .kpi-grid{grid-template-columns:1fr;gap:10px}
+      .card,.panel,.table-panel,.chart-card{padding:12px;border-radius:16px}
+      .building-stat{grid-template-columns:1fr;gap:6px}
+      .stat-value{text-align:left}
+      .building-info-grid,.dashboard-grid,.advanced-grid,.chart-grid{grid-template-columns:1fr;gap:10px}
+      .mini-kpi-row{grid-template-columns:1fr 1fr;gap:8px}
+      .summary-grid{gap:8px}
+      .panel-head{align-items:flex-start}
+      .toolbar{width:100%}
+      select{min-width:100%;width:100%}
+      .floor-group-header{padding:10px 12px;}
+      .floor-group-body{padding:0 10px;}.floor-group-body.open{padding:10px 10px 2px 10px;}
+      .alloc-row{
+        grid-template-columns: 1fr;
+        gap:6px;
+        padding-bottom:10px;
+        border-bottom:1px dashed #e5e7eb;
+        margin-bottom:10px;
+      }
+      .alloc-name{font-size:15px;}
+      .alloc-num{text-align:left;}
+      .stack-bar{height:16px;}
+      .panel-title{font-size:18px;}
+      .tag{font-size:11px;padding:5px 9px;}
+      .building-card-head{padding:12px;}
+      .building-card-body.open{padding:0 12px 12px 12px;}
+      .building-card-head-right{width:100%;justify-content:space-between;}
+      .admin-create-grid{grid-template-columns:1fr;}
+    }
+  
+    .brand-icon img{
+      	width:130%;
+  	height:100%;
+  	object-fit:contain;
+    }
+
+  
+/* remove bold numbers */
+td, .alloc-num, .floor-empty, .floor-used, .stat-value {
+  font-weight:400 !important;
+}
+
+
+
+    .auth-overlay{
+      position:fixed;inset:0;z-index:9999;
+      background:linear-gradient(135deg, rgba(15,23,42,.82), rgba(37,99,235,.55));
+      display:flex;align-items:center;justify-content:center;padding:18px;
+      backdrop-filter:blur(6px);
+    }
+    .auth-shell{width:min(980px,100%);display:grid;grid-template-columns:1.1fr .9fr;overflow:hidden;border-radius:24px;box-shadow:0 30px 60px rgba(15,23,42,.28);background:#fff;}
+    .auth-brand{
+      padding:34px;background:linear-gradient(180deg,#0f172a,#1e3a8a);color:#fff;display:flex;flex-direction:column;justify-content:space-between;
+    }
+    .auth-brand h2{margin:0 0 10px 0;font-size:30px;font-weight:900;line-height:1.15;}
+    .auth-brand p{margin:0;color:rgba(255,255,255,.82);line-height:1.65;font-size:14px;}
+    .auth-brand ul{margin:18px 0 0 18px;padding:0;color:rgba(255,255,255,.88);line-height:1.9;font-size:14px;}
+    .auth-panel{padding:26px;background:linear-gradient(180deg,#ffffff,#f8fbff);}
+    .auth-tabs{display:flex;gap:8px;margin-bottom:16px;}
+    .auth-tab{flex:1;border:none;border-radius:12px;background:#eff6ff;color:#1d4ed8;font-weight:800;height:42px;}
+    .auth-tab.active{background:linear-gradient(180deg,#3b82f6,#2563eb);color:#fff;}
+    .auth-form{display:none;}
+    .auth-form.active{display:block;}
+    .auth-form h3{margin:0 0 6px 0;font-size:22px;}
+    .auth-form p{margin:0 0 16px 0;color:#64748b;font-size:13px;line-height:1.6;}
+    .field{margin-bottom:12px;}
+    .field label{display:block;font-size:12px;font-weight:700;color:#475569;margin-bottom:6px;}
+    .field input,.field select{
+      width:100%;height:46px;border:1px solid #dbe6f2;border-radius:12px;padding:0 12px;font-size:14px;background:#fff;box-shadow:none;
+    }
+    .auth-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px;}
+    .auth-hint{margin-top:10px;font-size:12px;color:#64748b;line-height:1.6;}
+    .auth-error,.auth-success{display:none;margin-bottom:12px;padding:11px 12px;border-radius:12px;font-size:13px;line-height:1.5;}
+    .auth-error{background:#fff1f2;color:#be123c;border:1px solid #fecdd3;}
+    .auth-success{background:#ecfdf5;color:#047857;border:1px solid #a7f3d0;}
+    .userbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:10px 12px;border:1px solid var(--line);border-radius:16px;background:linear-gradient(180deg,#fff,#f8fbff);}
+    .admin-create-grid{display:grid;grid-template-columns:1.2fr 1fr 1fr .9fr auto;gap:10px;align-items:end;}
+    .user-pill{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:999px;background:#eff6ff;border:1px solid #bfdbfe;color:#1d4ed8;font-size:12px;font-weight:800;}
+    .hidden-by-role{display:none !important;}
+    .lock-badge{margin-left:6px;font-size:11px;color:#94a3b8;font-weight:700;}
+    body.viewer-mode .money-sensitive-card{display:none !important;}
+    body.viewer-mode .money-col{display:none !important;}
+    body.viewer-mode td.money-col{display:none !important;}
+    body.viewer-mode .floor-rent{display:none !important;}
+    body.viewer-mode .money-mini-kpi{display:none !important;}
+    @media (max-width:860px){
+      .auth-shell{grid-template-columns:1fr;}
+      .auth-brand{padding:22px;}
+      .auth-panel{padding:18px;}
+    }
+
+</style>
+</head>
+<body>
+
+  <div class="auth-overlay" id="authOverlay">
+    <div class="auth-shell">
+      <div class="auth-brand">
+        <div>
+          <h2>PaxSky Dashboard Access</h2>
+        </div>
+        <p> Tài khoản mặc định: Guest	    <br>Pass mặc định: guest123	
+	</p>
+      </div>
+      <div class="auth-panel">
+        <div class="auth-tabs">
+          <button class="auth-tab active" id="tabLogin" type="button">Đăng nhập</button>
+          
+        </div>
+        <div class="auth-error" id="authError"></div>
+        <div class="auth-success" id="authSuccess"></div>
+
+        <form class="auth-form active" id="loginForm">
+          <h3>Đăng nhập hệ thống</h3>
+          <p>Đăng nhập để mở dashboard.</p>
+          <div class="field">
+            <label for="loginUsername">Tên đăng nhập</label>
+            <input id="loginUsername" type="text" placeholder="Nhập tên đăng nhập" autocomplete="username" />
+          </div>
+          <div class="field">
+            <label for="loginPassword">Mật khẩu</label>
+            <input id="loginPassword" type="password" placeholder="Nhập mật khẩu" autocomplete="current-password" />
+          </div>
+          <div class="auth-actions">
+            <button class="btn-primary" type="submit">Đăng nhập</button>
+          </div>
+          <div class="auth-hint">Vui lòng nhập đúng thông tin để đăng nhập.</div>
+        </form>
+
+        
+      </div>
+    </div>
+  </div>
+
+  <div class="container" id="printArea">
+    <div class="header section">
+      <div class="brand">
+        <div class="brand-icon">
+  		<img src="https://i.imgur.com/BhhuDZB.jpeg" alt="Pax Sky">
+	</div>
+        <div class="title">
+          <h1>PaxSky Dashboard Oview</h1>
+          <p> Dữ liệu realtime từ Google Sheet qua OpenSheet</p>
+        </div>
+      </div>
+      <div class="toolbar">
+        <div class="userbar" id="userBar">
+          <span class="user-pill" id="currentUserPill">Chưa đăng nhập</span>
+          <button id="manageUsersBtn" type="button" class="hidden-by-role">Quản lý tài khoản</button>
+          <button id="logoutBtn" type="button">Đăng xuất</button>
+        </div>
+        <select id="buildingFilter">
+          <option value="">Tất cả tòa nhà</option>
+        </select>
+        <button id="refreshBtn">Làm mới dữ liệu <span class="lock-badge">Viewer+</span></button>
+                
+      </div>
+    </div>
+
+    
+    <div class="panel section hidden-by-role" id="userManagementPanel">
+      <div class="panel-head">
+        <h2 class="panel-title">Quản lý tài khoản &amp; phân quyền</h2>
+        <span class="tag" id="userPanelTag">Admin only</span>
+      </div>
+      <div class="info-box" style="margin-bottom:14px;" id="adminCreateBox">
+        <div class="info-label">Tạo tài khoản mới</div>
+        <div class="admin-create-grid">
+          <div class="field" style="margin-bottom:0;">
+            <label for="adminCreateFullname">Họ và tên</label>
+            <input id="adminCreateFullname" type="text" placeholder="Ví dụ: Nguyễn Văn A" />
+          </div>
+          <div class="field" style="margin-bottom:0;">
+            <label for="adminCreateUsername">Tên đăng nhập</label>
+            <input id="adminCreateUsername" type="text" placeholder="Tối thiểu 4 ký tự" autocomplete="off" />
+          </div>
+          <div class="field" style="margin-bottom:0;">
+            <label for="adminCreatePassword">Mật khẩu</label>
+            <input id="adminCreatePassword" type="password" placeholder="Tối thiểu 6 ký tự" autocomplete="new-password" />
+          </div>
+          <div class="field" style="margin-bottom:0;">
+            <label for="adminCreateRole">Phân quyền</label>
+            <select id="adminCreateRole">
+              <option value="viewer">Viewer</option>
+              <option value="manager">Manager</option>
+              <option value="admin">Admin</option>
+            </select>
+          </div>
+          <div class="field" style="margin-bottom:0;">
+            <button type="button" class="btn-primary" id="adminCreateUserBtn">Tạo tài khoản</button>
+          </div>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table style="min-width:980px;">
+          <thead>
+            <tr>
+              <th>Họ tên</th>
+              <th>Tên đăng nhập</th>
+              <th>Quyền</th>
+              <th>Trạng thái</th>
+              <th>Ngày tạo</th>
+              <th>Thao tác</th>
+            </tr>
+          </thead>
+          <tbody id="userTableBody"><tr><td colspan="6" class="muted">Chưa có dữ liệu người dùng.</td></tr></tbody>
+        </table>
+      </div>
+      <div class="footer-note">Admin có thể tạo tài khoản, đổi tên hiển thị, đổi tên đăng nhập, đổi quyền, khóa/mở khóa và đổi mật khẩu cho các tài khoản khác. Manager chỉ xem dashboard và làm mới dữ liệu. Viewer được phép làm mới dữ liệu nhưng vẫn bị ẩn thông tin tài chính.</div>
+    </div>
+
+
+    <div id="errorBox" class="error-box"></div>
+
+    <div class="kpi-grid section">
+      <div class="card kpi-primary"><div class="label">Tổng diện tích</div><div class="value" id="tong">0 m²</div></div>
+      <div class="card kpi-empty"><div class="label">Diện tích trống</div><div class="value" id="trong">0 m²</div></div>
+      <div class="card kpi-used"><div class="label">Diện tích đã thuê</div><div class="value" id="dathue">0 m²</div></div>
+      <div class="card kpi-neutral money-sensitive-card"><div class="label">Giá trung bình</div><div class="value" id="gia">0 USD/m²</div></div>
+      <div class="card kpi-primary money-sensitive-card"><div class="label">Tổng giá thuê</div><div class="value" id="doanhthu">0 VND</div></div>
+    </div>
+
+    <div class="panel section">
+      <div class="panel-head">
+        <h2 class="panel-title">Thông tin tòa nhà</h2>
+        <span class="tag" id="overviewTag">Overview</span>
+      </div>
+      <div class="building-info-grid">
+        <div class="info-box hero">
+          <div class="info-label">Tên tòa nhà / danh mục hiển thị</div>
+          <div class="info-value" id="infoBuildingName">-</div>
+          <div class="info-sub" id="infoBuildingNote" style="display:none;"></div>
+        </div>
+        <div class="info-box">
+          <div class="info-label">Tổng diện tích các tòa</div>
+          <div class="info-value" id="infoTotalArea">-</div>
+          <div class="info-sub">Lấy từ ghi chú hoặc cộng từ dữ liệu đang hiển thị nếu không tìm thấy.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="dashboard-grid section">
+      <div class="panel">
+        <div class="panel-head">
+          <h2 class="panel-title">Dashboard diện tích theo tòa nhà</h2>
+          <span class="tag">Overview</span>
+        </div>
+        <div id="buildingSummary"></div>
+        <div class="mini-note">Click vào tên tòa để drilldown nhanh.</div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head">
+          <h2 class="panel-title">Tỷ lệ phân bổ diện tích</h2>
+          <span class="tag">Occupancy</span>
+        </div>
+        <div class="donut-wrap">
+          <div class="donut-center">
+            <div class="big" id="donutPercent">0%</div>
+            <div class="mini-note">Tỷ lệ trống</div>
+          </div>
+          <div class="donut" id="donutChart"></div>
+        </div>
+        <div class="legend">
+          <div class="legend-item"><div class="legend-left"><span class="dot empty"></span> Trống (m²)</div><div id="legendEmpty">0 m²</div></div>
+          <div class="legend-item"><div class="legend-left"><span class="dot other"></span> Đã thuê (m²)</div><div id="legendOther">0 m²</div></div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head">
+          <h2 class="panel-title">Tóm tắt nhanh</h2>
+          <span class="tag">Quick stats</span>
+        </div>
+        <div class="summary-grid">
+          <div class="summary-item"><div class="s-label">Số tòa nhà đang hiển thị</div><div class="s-value" id="countBuildings">0</div></div>
+          <div class="summary-item"><div class="s-label">Số mặt bằng / tầng đang hiển thị</div><div class="s-value" id="countRows">0</div></div>
+          <div class="summary-item"><div class="s-label">Tòa có diện tích lớn nhất</div><div class="s-value" id="topBuilding">-</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="advanced-grid section">
+      <div class="chart-card">
+        <div class="panel-head">
+          <h2 class="panel-title">Diện tích theo từng tòa</h2>
+          <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+            <span class="tag">Building allocation</span>
+            <span class="building-card-toggle" id="buildingAllocationToggle" style="cursor:pointer;">Show</span>
+          </div>
+        </div>
+        <div id="buildingAllocationBody" class="building-card-body" style="max-height:0;opacity:0;padding:0 0;">
+          <div class="alloc-legend" style="margin-top:12px;">
+            <span><span class="dot rent"></span> DT cho thuê</span>
+            <span><span class="dot empty"></span> DT trống</span>
+            <span><span class="dot other"></span> DT đã thuê</span>
+          </div>
+          <div class="chart-note">Click tên tòa ở đây để drilldown. Cột số bên phải lần lượt là diện tích cho thuê, trống và đã thuê.</div>
+          <div id="buildingAllocationChart"></div>
+        </div>
+      </div>
+
+      <div class="chart-card">
+        <div class="panel-head">
+          <h2 class="panel-title">Diện tích theo từng tầng</h2>
+          <span class="tag">Floor allocation</span>
+        </div>
+        <div class="alloc-legend">
+          <span><span class="dot empty"></span> DT trống</span>
+          <span><span class="dot other"></span> DT đã thuê</span>
+        </div>
+        <div class="chart-note">Chọn Show để xem chi tiết.</div>
+        <div id="floorAllocationChart" style="margin-top:12px;"></div>
+      </div>
+    </div>
+
+    <div class="panel section">
+      <div class="panel-head">
+        <h2 class="panel-title">Chart chi tiết từng tòa nhà</h2>
+        <span class="tag">Detail cards</span>
+      </div>
+      <div id="buildingCharts" class="chart-grid">
+        <div class="muted">Đang tải chart...</div>
+      </div>
+    </div>
+
+    <div class="table-panel section">
+      <div class="panel-head">
+        <h2 class="panel-title">Data chi tiết</h2>
+        <span class="tag">Detail table</span>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Tòa nhà</th>
+              <th>Tầng</th>
+              <th>DT cho thuê</th>
+              <th>DT trống</th>
+              <th>DT đã thuê</th>
+              <th class="money-col">Đơn giá/m²</th>
+              <th class="money-col">Tỷ giá USD theo ngày 1USD</th>
+              <th class="money-col">Phí dịch vụ</th>
+              <th class="money-col">Giá thuê</th>
+              <th>Trạng thái</th>
+            </tr>
+          </thead>
+          <tbody id="tbody"><tr><td colspan="10" class="muted">Đang tải dữ liệu...</td></tr></tbody>
+        </table>
+      </div>
+      <div class="footer-note">Cập nhật theo thời gian thực.</div>
+    </div>
+  </div>
+
+  <script>
+    const DATA_URL = "https://opensheet.elk.sh/1AI2GvMg2UAQt264NNl5PwCVYFc8z-t_7LhATODdQASs/datapaxsky";
+    let raw = [];
+    const STORAGE_KEYS = {
+      users: "paxsky_users",
+      session: "paxsky_session"
+    };
+    const ROLES = {
+      admin: { label: "Admin", canRefresh: true, canOpenUserPanel: true },
+      manager: { label: "Manager", canRefresh: true, canOpenUserPanel: false },
+      viewer: { label: "Viewer", canRefresh: true, canOpenUserPanel: false }
+    };
+    let currentUser = null;
+
+    function seedDefaultAdmin(){
+      const users = JSON.parse(localStorage.getItem(STORAGE_KEYS.users) || "[]");
+      if (users.length) return;
+      const now = new Date().toISOString();
+      const seed = [
+        {
+          id: "u_supadmin",
+          fullName: "Super Admin",
+          username: "supadmin",
+          password: "supadmin123",
+          role: "admin",
+          active: true,
+          createdAt: now
+        },
+        {
+          id: "u_manager_admin",
+          fullName: "Admin",
+          username: "admin",
+          password: "admin123",
+          role: "manager",
+          active: true,
+          createdAt: now
+        },
+        {
+          id: "u_viewer_guest",
+          fullName: "Guest",
+          username: "Guest",
+          password: "guest123",
+          role: "viewer",
+          active: true,
+          createdAt: now
+        }
+      ];
+      localStorage.setItem(STORAGE_KEYS.users, JSON.stringify(seed));
+    }
+    function getUsers(){ return JSON.parse(localStorage.getItem(STORAGE_KEYS.users) || "[]"); }
+    function saveUsers(users){ localStorage.setItem(STORAGE_KEYS.users, JSON.stringify(users)); }
+    function setSession(username){ localStorage.setItem(STORAGE_KEYS.session, username); }
+    function clearSession(){ localStorage.removeItem(STORAGE_KEYS.session); }
+    function findUser(username){ return getUsers().find(u => u.username === username) || null; }
+    function getSessionUser(){
+      const username = localStorage.getItem(STORAGE_KEYS.session);
+      if (!username) return null;
+      const user = findUser(username);
+      return user && user.active ? user : null;
+    }
+    function roleMeta(role){ return ROLES[role] || ROLES.viewer; }
+
+    function canOpenUserPanel(){ return !!(currentUser && roleMeta(currentUser.role).canOpenUserPanel); }
+    function canCreateUsers(){ return !!(currentUser && currentUser.role === "admin"); }
+    function canUpdateRoles(){ return !!(currentUser && currentUser.role === "admin"); }
+    function canToggleUsers(){ return !!(currentUser && currentUser.role === "admin"); }
+    function canChangePasswordFor(targetUser){
+      if (!currentUser || !targetUser) return false;
+      if (currentUser.role === "admin") return true;
+      return false;
+    }
+    function hasFinancialAccess(){ return !!(currentUser && currentUser.role !== "viewer"); }
+    function applyRoleVisibility(){
+      document.body.classList.toggle("viewer-mode", !!(currentUser && currentUser.role === "viewer"));
+      const moneyCards = document.querySelectorAll(".money-sensitive-card");
+      moneyCards.forEach(el => { el.style.display = hasFinancialAccess() ? "" : "none"; });
+    }
+    function formatDateTime(value){
+      if (!value) return "-";
+      const d = new Date(value);
+      if (isNaN(d.getTime())) return value;
+      return d.toLocaleString("vi-VN");
+    }
+    function setAuthMessage(type, message){
+      const err = document.getElementById("authError");
+      const ok = document.getElementById("authSuccess");
+      err.style.display = "none"; ok.style.display = "none";
+      err.textContent = ""; ok.textContent = "";
+      if (!message) return;
+      const el = type === "error" ? err : ok;
+      el.textContent = message;
+      el.style.display = "block";
+    }
+    function showTab(tab){
+      document.getElementById("tabLogin").classList.add("active");
+      document.getElementById("loginForm").classList.add("active");
+      setAuthMessage("error", "");
+      setAuthMessage("success", "");
+    }
+    function updateAuthUI(){
+      currentUser = getSessionUser();
+      const overlay = document.getElementById("authOverlay");
+      const userPill = document.getElementById("currentUserPill");
+      const refreshBtn = document.getElementById("refreshBtn");
+      const manageBtn = document.getElementById("manageUsersBtn");
+      const managePanel = document.getElementById("userManagementPanel");
+
+      if (!currentUser){
+        overlay.style.display = "flex";
+        userPill.textContent = "Chưa đăng nhập";
+        refreshBtn.disabled = true;
+        manageBtn.classList.add("hidden-by-role");
+        managePanel.classList.add("hidden-by-role");
+        applyRoleVisibility();
+        return;
+      }
+
+      overlay.style.display = "none";
+      const meta = roleMeta(currentUser.role);
+      userPill.textContent = `${currentUser.fullName || currentUser.username} • ${meta.label}`;
+      refreshBtn.disabled = !meta.canRefresh;
+      if (canOpenUserPanel()) {
+        manageBtn.classList.remove("hidden-by-role");
+        managePanel.classList.remove("hidden-by-role");
+        renderUsersTable();
+      } else {
+        manageBtn.classList.add("hidden-by-role");
+        managePanel.classList.add("hidden-by-role");
+      }
+      const createBox = document.getElementById("adminCreateBox");
+      if (createBox) createBox.style.display = canCreateUsers() ? "block" : "none";
+      applyRoleVisibility();
+    }
+    function requireAuth(action){
+      if (!currentUser){ alert("Vui lòng đăng nhập."); return false; }
+      const meta = roleMeta(currentUser.role);
+      if (action === "refresh" && !meta.canRefresh) { alert("Tài khoản này không có quyền làm mới dữ liệu."); return false; }
+      if (action === "openUserPanel" && !canOpenUserPanel()) { alert("Chỉ Admin mới có quyền quản lý tài khoản."); return false; }
+      if (action === "createUser" && !canCreateUsers()) { alert("Chỉ Admin mới có quyền tạo tài khoản."); return false; }
+      if (action === "updateRole" && !canUpdateRoles()) { alert("Chỉ Admin mới có quyền đổi phân quyền."); return false; }
+      if (action === "toggleUser" && !canToggleUsers()) { alert("Chỉ Admin mới có quyền khóa hoặc mở khóa tài khoản."); return false; }
+      if (action === "updateUserInfo" && !canUpdateRoles()) { alert("Chỉ Admin mới có quyền đổi tên hiển thị và tên đăng nhập."); return false; }
+      return true;
+    }
+    function renderUsersTable(){
+      const tbody = document.getElementById("userTableBody");
+      const users = getUsers();
+      tbody.innerHTML = users.map(u => {
+        const canRoleEdit = canUpdateRoles();
+        const canLockEdit = canToggleUsers() && u.username !== currentUser.username;
+        const canPassEdit = canChangePasswordFor(u);
+        const canInfoEdit = canUpdateRoles() && u.username !== currentUser.username;
+        return `
+        <tr>
+          <td><input type="text" data-fullname-user="${u.username}" value="${(u.fullName || "").replace(/"/g, "&quot;")}" ${canInfoEdit ? "" : "disabled"} style="width:160px;height:40px;border:1px solid #dbe6f2;border-radius:10px;padding:0 10px;" /></td>
+          <td><input type="text" data-username-user="${u.username}" value="${u.username.replace(/"/g, "&quot;")}" ${canInfoEdit ? "" : "disabled"} style="width:140px;height:40px;border:1px solid #dbe6f2;border-radius:10px;padding:0 10px;" /></td>
+          <td>
+            <select data-role-user="${u.username}" ${canRoleEdit ? "" : "disabled"}>
+              <option value="admin" ${u.role === "admin" ? "selected" : ""}>Admin</option>
+              <option value="manager" ${u.role === "manager" ? "selected" : ""}>Manager</option>
+              <option value="viewer" ${u.role === "viewer" ? "selected" : ""}>Viewer</option>
+            </select>
+          </td>
+          <td>${u.active ? "Đang hoạt động" : "Đã khóa"}</td>
+          <td>${formatDateTime(u.createdAt)}</td>
+          <td>
+            <div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;align-items:center;">
+              <button type="button" onclick="updateUserInfo('${u.username.replace(/'/g, "\\'")}')" ${canInfoEdit ? "" : "disabled"}>Lưu info</button>
+              <button type="button" onclick="updateUserRole('${u.username.replace(/'/g, "\\'")}')" ${canRoleEdit ? "" : "disabled"}>Lưu quyền</button>
+              <button type="button" onclick="toggleUserActive('${u.username.replace(/'/g, "\\'")}')" ${canLockEdit ? "" : "disabled"}>${u.active ? "Khóa" : "Mở khóa"}</button>
+              <input type="password" data-password-user="${u.username}" placeholder="Mật khẩu mới" ${canPassEdit ? "" : "disabled"} style="width:150px;height:40px;border:1px solid #dbe6f2;border-radius:10px;padding:0 10px;" />
+              <button type="button" onclick="changeUserPassword('${u.username.replace(/'/g, "\\'")}')" ${canPassEdit ? "" : "disabled"}>Đổi pass</button>
+            </div>
+          </td>
+        </tr>
+      `}).join("") || '<tr><td colspan="6" class="muted">Chưa có dữ liệu người dùng.</td></tr>';
+    }
+    function updateUserInfo(oldUsername){
+      if (!requireAuth("updateUserInfo")) return;
+      if (oldUsername === currentUser.username) {
+        alert("Không thể đổi tên hiển thị hoặc tên đăng nhập của tài khoản đang đăng nhập.");
+        return;
+      }
+      const users = getUsers();
+      const user = users.find(u => u.username === oldUsername);
+      const fullNameInput = document.querySelector(`[data-fullname-user="${CSS.escape(oldUsername)}"]`);
+      const usernameInput = document.querySelector(`[data-username-user="${CSS.escape(oldUsername)}"]`);
+      if (!user || !fullNameInput || !usernameInput) return;
+
+      const newFullName = fullNameInput.value.trim();
+      const newUsername = usernameInput.value.trim();
+
+      if (!newUsername || newUsername.length < 4) {
+        alert("Tên đăng nhập phải có ít nhất 4 ký tự.");
+        return;
+      }
+      const duplicated = users.find(u => u.username === newUsername && u.username !== oldUsername);
+      if (duplicated) {
+        alert("Tên đăng nhập đã tồn tại.");
+        return;
+      }
+
+      user.fullName = newFullName;
+      user.username = newUsername;
+      saveUsers(users);
+      updateAuthUI();
+      alert("Đã cập nhật tên hiển thị và tên đăng nhập cho " + newUsername);
+    }
+
+    function updateUserRole(username){
+      if (!requireAuth("updateRole")) return;
+      const users = getUsers();
+      const user = users.find(u => u.username === username);
+      const select = document.querySelector(`[data-role-user="${CSS.escape(username)}"]`);
+      if (!user || !select) return;
+      user.role = select.value;
+      saveUsers(users);
+      updateAuthUI();
+      alert("Đã cập nhật quyền cho " + username);
+    }
+    function toggleUserActive(username){
+      if (!requireAuth("toggleUser")) return;
+      const users = getUsers();
+      const user = users.find(u => u.username === username);
+      if (!user || user.username === currentUser.username) return;
+      user.active = !user.active;
+      saveUsers(users);
+      renderUsersTable();
+      alert(user.active ? "Đã mở khóa tài khoản." : "Đã khóa tài khoản.");
+    }
+
+
+    function changeUserPassword(username){
+      if (!requireAuth("openUserPanel")) return;
+      const users = getUsers();
+      const user = users.find(u => u.username === username);
+      const input = document.querySelector(`[data-password-user="${CSS.escape(username)}"]`);
+      const newPassword = input ? input.value : "";
+      if (!user) return;
+      if (!canChangePasswordFor(user)) { alert("Bạn không có quyền đổi mật khẩu cho tài khoản này."); return; }
+      if (newPassword.length < 6) { alert("Mật khẩu mới phải có ít nhất 6 ký tự."); return; }
+      user.password = newPassword;
+      saveUsers(users);
+      if (input) input.value = "";
+      alert(`Đã đổi mật khẩu cho ${username}.`);
+    }
+
+    function normalizeHeader(text){
+      return String(text || "")
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/đ/g, "d").replace(/Đ/g, "D")
+        .replace(/[^a-zA-Z0-9]+/g, " ")
+        .trim()
+        .toLowerCase();
+    }
+
+    function getFlexible(obj, ...keywords){
+      const entries = Object.entries(obj || {}).map(([key, value]) => ({
+        normalizedKey: normalizeHeader(key),
+        value
+      }));
+      for (const kw of keywords) {
+        const target = normalizeHeader(kw);
+        for (const entry of entries) if (entry.normalizedKey === target) return entry.value;
+      }
+      for (const kw of keywords) {
+        const target = normalizeHeader(kw);
+        for (const entry of entries) if (entry.normalizedKey.includes(target)) return entry.value;
+      }
+      return "";
+    }
+
+    function normalizeMoneyLikeValue(value){
+      if (value === undefined || value === null) return "";
+      return String(value)
+        .replace(/ /g, " ")
+        .replace(/\s+/g, " ")
+        .trim();
+    }
+
+    function parseNumber(value){
+      const raw = normalizeMoneyLikeValue(value);
+      if (!raw) return 0;
+
+      const numeric = raw
+        .replace(/[,\s]/g, "")
+        .replace(/\.(?=\d{3}(\D|$))/g, "")
+        .replace(/[^\d.-]/g, "");
+
+      const num = parseFloat(numeric);
+      return isNaN(num) ? 0 : num;
+    }
+
+    function parseDecimalNumber(value){
+      const raw = normalizeMoneyLikeValue(value);
+      if (!raw) return 0;
+
+      let numeric = raw.replace(/\s+/g, "").replace(/[^\d,.-]/g, "");
+      const hasComma = numeric.includes(",");
+      const hasDot = numeric.includes(".");
+
+      if (hasComma && hasDot) {
+        if (numeric.lastIndexOf(",") > numeric.lastIndexOf(".")) {
+          numeric = numeric.replace(/\./g, "").replace(/,/g, ".");
+        } else {
+          numeric = numeric.replace(/,/g, "");
+        }
+      } else if (hasComma && !hasDot) {
+        const commaParts = numeric.split(",");
+        if (commaParts.length === 2 && commaParts[1].length <= 2) {
+          numeric = numeric.replace(/,/g, ".");
+        } else {
+          numeric = numeric.replace(/,/g, "");
+        }
+      } else if (hasDot) {
+        const dotParts = numeric.split(".");
+        if (dotParts.length > 2) {
+          const last = dotParts.pop();
+          numeric = dotParts.join("") + "." + last;
+        } else if (dotParts.length === 2 && dotParts[1].length === 3) {
+          numeric = numeric.replace(/\./g, "");
+        }
+      }
+
+      const num = parseFloat(numeric);
+      return isNaN(num) ? 0 : num;
+    }
+
+    function formatVND(value){ return Number(value || 0).toLocaleString("vi-VN") + " VND"; }
+    function formatUSD(value){ return Number(value || 0).toLocaleString("en-US") + " USD"; }
+    function formatM2(value){ return Number(value || 0).toLocaleString("vi-VN") + " m²"; }
+    function formatExchangeVND(value){
+      const num = Number(value || 0);
+      if (!isFinite(num) || num <= 0) return "-";
+      return num.toLocaleString("vi-VN") + " VND";
+    }
+
+    function formatBuildingName(str){
+      let text = String(str || "").trim();
+      if (!text) return "";
+
+      text = text
+        .replace(/\s+/g, " ")
+        .toLowerCase()
+        .replace(/^tòa\s+nhà\s+/i, "")
+        .replace(/^toa\s+nha\s+/i, "")
+        .replace(/^building\s+/i, "")
+        .replace(/\bpax\s+sky\b/gi, "paxsky");
+
+      const parts = text.split(" ").filter(Boolean).map(word => {
+        if (/^\d+$/.test(word)) return word;
+        if (/^[a-z]{1,4}\d*$/.test(word) && word.length <= 4 && word !== "paxsky") return word.toUpperCase();
+        return word;
+      });
+
+      return "Tòa nhà " + parts.join(" ");
+    }
+
+    function showError(message){
+      const box = document.getElementById("errorBox");
+      box.style.display = message ? "block" : "none";
+      box.textContent = message || "";
+    }
+
+    function extractBuildingInfo(note, fallbackArea){
+      const text = String(note || "").replace(/\s+/g, " ").trim();
+      const info = { totalArea: fallbackArea ? formatM2(fallbackArea) : "-" };
+      if (!text) return info;
+      const areaMatch = text.match(/tong dien tich\s*:\s*([\d\.,]+)/i);
+      if (areaMatch && areaMatch[1]) {
+        const area = parseNumber(areaMatch[1]);
+        if (area > 0) info.totalArea = formatM2(area);
+      }
+      return info;
+    }
+
+    function normalizeData(data){
+      let lastBuilding = "";
+      return data.map(r => {
+        const buildingText = String(getFlexible(r, "toa nha", "building")).trim();
+        if (buildingText && buildingText.toUpperCase() !== "N/A") lastBuilding = buildingText;
+
+        const areaRent = parseNumber(getFlexible(r, "dien tich cho thue", "dt cho thue"));
+        const areaEmpty = parseNumber(getFlexible(r, "dien tich trong", "dt trong"));
+        const areaUsed = parseNumber(getFlexible(r, "dien tich da thue", "dt da thue"));
+        const rentRaw = getFlexible(r, "gia thue", "gia thue vnd thang", "rent");
+        const floor = String(getFlexible(r, "tang", "floor") || "-").replace(/\n/g, " ").trim() || "-";
+        const statusRaw = String(getFlexible(r, "trang thai", "status") || "").trim();
+
+        return {
+          building: buildingText && buildingText.toUpperCase() !== "N/A" ? buildingText : (lastBuilding || ""),
+          floor,
+          areaRent,
+          areaEmpty,
+          areaUsed,
+          price: parseDecimalNumber(getFlexible(r, "gia m2", "gia/m2", "price")),
+          promo: parseDecimalNumber(getFlexible(r, "ty gia usd theo ngay", "ty gia usd", "ty gia", "khuyen mai", "promo")),
+          fee: parseDecimalNumber(getFlexible(r, "phi quan ly", "phi", "fee")),
+          rent: parseNumber(rentRaw),
+          rentRaw,
+          status: statusRaw || (areaUsed > 0 ? "ĐÃ THUÊ" : "TRỐNG"),
+          note: String(getFlexible(r, "ghi chu", "note") || "").trim()
+        };
+      }).filter(r => r.building && (r.areaRent > 0 || r.areaEmpty > 0 || r.areaUsed > 0 || r.rent > 0));
+    }
+
+    function uniqueSorted(values){
+      return [...new Set(values.filter(Boolean))].sort((a,b) => a.localeCompare(b, undefined, {numeric:true, sensitivity:'base'}));
+    }
+
+    
+
+    
+    function initFilters(){
+      const buildingSelect = document.getElementById("buildingFilter");
+      const currentValue = buildingSelect.value || "";
+      const buildings = uniqueSorted(raw.map(x => x.building));
+      buildingSelect.innerHTML = '<option value="">Tất cả tòa nhà</option>' + buildings.map(x => `<option value="${x}">${x}</option>`).join("");
+      buildingSelect.value = buildings.includes(currentValue) ? currentValue : "";
+      buildingSelect.addEventListener("change", applyFilters);
+    }
+
+    function applyFilters(){
+      const building = document.getElementById("buildingFilter").value;
+      const rows = building ? raw.filter(r => r.building === building) : raw;
+      render(rows);
+    }
+    function drilldownToBuilding(building){
+      document.getElementById("buildingFilter").value = building || "";      applyFilters();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    async function loadData(){
+      const tbody = document.getElementById("tbody");
+      tbody.innerHTML = '<tr><td colspan="10" class="muted">Đang tải dữ liệu...</td></tr>';
+      showError("");
+      try{
+        const res = await fetch(DATA_URL, { cache: "no-store" });
+        const data = await res.json();
+        if (!Array.isArray(data) || data.length === 0) throw new Error("Không có dữ liệu");
+        raw = normalizeData(data);
+        initFilters();
+        render(raw);
+
+        const rentMissing = raw.filter(x => {
+          const source = normalizeMoneyLikeValue(x.rentRaw);
+          if (!source || !/\d/.test(source)) return false;
+          if (/^(0+|[-–—]|n\/?a|na)$/i.test(source.replace(/\s+/g, ""))) return false;
+          return x.rent === 0;
+        });
+        if (rentMissing.length && hasFinancialAccess()) {
+          console.warn("Rent rows still unreadable:", rentMissing.map(x => ({ building: x.building, floor: x.floor, rentRaw: x.rentRaw })));
+        }
+      }catch(err){
+        console.error(err);
+        showError("Không đọc được dữ liệu. Hãy kiểm tra lại sheet hoặc link OpenSheet.");
+        tbody.innerHTML = '<tr><td colspan="10" class="muted">Không đọc được dữ liệu. Hãy kiểm tra lại sheet hoặc link OpenSheet.</td></tr>';
+      }
+    }
+
+    function renderBuildingInfo(rows){
+      const selected = document.getElementById("buildingFilter").value;
+      const buildingName = selected ? formatBuildingName(selected) : "Tổng diện tích các tòa";
+      const totalArea = rows.reduce((sum, r) => sum + r.areaRent, 0);
+      const noteRow = rows.find(r => r.note && r.note !== "-");
+      const info = extractBuildingInfo(noteRow ? noteRow.note : "", totalArea);
+
+      document.getElementById("overviewTag").textContent = selected ? "Selected building" : "All buildings";
+      document.getElementById("infoBuildingName").textContent = buildingName;
+      document.getElementById("infoTotalArea").textContent = info.totalArea;
+
+      const noteEl = document.getElementById("infoBuildingNote");
+      if (selected && noteRow && noteRow.note) {
+        noteEl.style.display = "block";
+        noteEl.textContent = noteRow.note;
+      } else {
+        noteEl.style.display = "none";
+        noteEl.textContent = "";
+      }
+    }
+
+    function renderDashboard(rows){
+      const byBuilding = {};
+      let totalArea = 0;
+      let emptyArea = 0;
+
+      rows.forEach(r => {
+        if (!byBuilding[r.building]) byBuilding[r.building] = { area: 0, empty: 0 };
+        byBuilding[r.building].area += r.areaRent;
+        totalArea += r.areaRent;
+        emptyArea += r.areaEmpty;
+      });
+
+      const items = Object.entries(byBuilding).map(([name, stats]) => ({ name, ...stats })).sort((a, b) => b.area - a.area);
+      const maxArea = items.length ? items[0].area : 0;
+
+      document.getElementById("buildingSummary").innerHTML = items.map(item => {
+        const percent = maxArea ? (item.area / maxArea) * 100 : 0;
+        return `
+          <div class="building-stat">
+            <div class="building-name" style="cursor:pointer;color:#1d4ed8;" onclick="drilldownToBuilding('${item.name.replace(/'/g, "\\'")}')">${formatBuildingName(item.name)}</div>
+            <div class="bar-wrap"><div class="bar-fill" style="width:${percent}%"></div></div>
+            <div class="stat-value">${formatM2(item.area)}</div>
+          </div>
+        `;
+      }).join("") || '<div class="muted">Không có dữ liệu.</div>';
+
+      const usedArea = Math.max(totalArea - emptyArea, 0);
+      const emptyPercent = totalArea ? Math.round((emptyArea / totalArea) * 100) : 0;
+      document.getElementById("donutChart").style.background = `conic-gradient(var(--empty) 0% ${emptyPercent}%, var(--used) ${emptyPercent}% 100%)`;
+      document.getElementById("donutPercent").textContent = emptyPercent + "%";
+      document.getElementById("legendEmpty").textContent = formatM2(emptyArea);
+      document.getElementById("legendOther").textContent = formatM2(usedArea);
+      document.getElementById("countBuildings").textContent = items.length.toLocaleString("vi-VN");
+      document.getElementById("countRows").textContent = rows.length.toLocaleString("vi-VN");
+      document.getElementById("topBuilding").textContent = items.length ? formatBuildingName(items[0].name) : "-";
+    }
+
+    function renderAdvancedAllocation(rows){
+      const byBuilding = {};
+      const byFloor = {};
+
+      rows.forEach(r => {
+        if (!byBuilding[r.building]) byBuilding[r.building] = { rent: 0, empty: 0, used: 0 };
+        byBuilding[r.building].rent += r.areaRent;
+        byBuilding[r.building].empty += r.areaEmpty;
+        byBuilding[r.building].used += r.areaUsed;
+
+        const floorKey = `${r.building} • ${r.floor}`;
+        if (!byFloor[floorKey]) byFloor[floorKey] = { rent: 0, empty: 0, used: 0, floor: r.floor, building: r.building };
+        byFloor[floorKey].rent += r.areaRent;
+        byFloor[floorKey].empty += r.areaEmpty;
+        byFloor[floorKey].used += r.areaUsed;
+      });
+
+      const buildingItems = Object.entries(byBuilding).map(([name, val]) => ({ name, ...val })).sort((a,b)=>b.rent-a.rent);
+      document.getElementById("buildingAllocationChart").innerHTML = buildingItems.map(item => `
+        <div class="alloc-row">
+          <div class="alloc-name" style="cursor:pointer;color:#1d4ed8;" onclick="drilldownToBuilding('${item.name.replace(/'/g, "\\'")}')">${formatBuildingName(item.name)}</div>
+          <div class="stack-bar" title="Cho thuê: ${formatM2(item.rent)} | Trống: ${formatM2(item.empty)} | Đã thuê: ${formatM2(item.used)}">
+            <div class="seg-rent" style="width:100%"></div>
+          </div>
+          <div class="alloc-num">${formatM2(item.rent)}</div>
+          <div class="alloc-num" style="color:#ea580c;">${formatM2(item.empty)}</div>
+          <div class="alloc-num" style="color:#15803d;">${formatM2(item.used)}</div>
+        </div>
+      `).join("") || '<div class="muted">Không có dữ liệu.</div>';
+
+      const floorItems = Object.values(byFloor);
+      const floorGroups = {};
+      floorItems.forEach(item => {
+        if (!floorGroups[item.building]) floorGroups[item.building] = [];
+        floorGroups[item.building].push(item);
+      });
+
+      const buildingOrder = Object.keys(floorGroups).sort((a, b) => {
+        const sumA = floorGroups[a].reduce((s, x) => s + x.rent, 0);
+        const sumB = floorGroups[b].reduce((s, x) => s + x.rent, 0);
+        return sumB - sumA;
+      });
+
+      document.getElementById("floorAllocationChart").innerHTML = buildingOrder.map(building => {
+        const rowsForBuilding = floorGroups[building].sort((a, b) => {
+          const isOtherA = a.floor.toLowerCase().includes("các tầng");
+          const isOtherB = b.floor.toLowerCase().includes("các tầng");
+          if (isOtherA && !isOtherB) return 1;
+          if (!isOtherA && isOtherB) return -1;
+          const numA = parseInt(a.floor.replace(/\D/g, "")) || 999;
+          const numB = parseInt(b.floor.replace(/\D/g, "")) || 999;
+          return numA - numB;
+        });
+
+        const groupId = "fg_" + building.replace(/[^a-zA-Z0-9]/g, "_");
+        return `
+          <div class="floor-group">
+            <div class="floor-group-header" onclick="toggleFloorGroup('${groupId}', this)">
+              <div class="floor-group-title">${formatBuildingName(building)}</div>
+              <div class="floor-group-toggle">Show</div>
+            </div>
+            <div class="floor-group-body" id="${groupId}" style="display:block;max-height:0;opacity:0;">
+              ${rowsForBuilding.map(item => {
+                const full = item.rent || 1;
+                const emptyPct = (item.empty / full) * 100;
+                const usedPct = (item.used / full) * 100;
+                return `
+                  <div class="alloc-row">
+                    <div class="alloc-name">${item.floor}</div>
+                    <div class="stack-bar" title="Cho thuê: ${formatM2(item.rent)} | Trống: ${formatM2(item.empty)} | Đã thuê: ${formatM2(item.used)}">
+                      <div class="seg-empty" style="width:${emptyPct}%"></div>
+                      <div class="seg-used" style="width:${usedPct}%"></div>
+                    </div>
+                    <div class="alloc-num">${formatM2(item.rent)}</div>
+                    <div class="alloc-num" style="color:#ea580c;">${formatM2(item.empty)}</div>
+                    <div class="alloc-num" style="color:#15803d;">${formatM2(item.used)}</div>
+                  </div>
+                `;
+              }).join("")}
+            </div>
+          </div>
+        `;
+      }).join("") || '<div class="muted">Không có dữ liệu.</div>';
+    }
+
+    function renderBuildingCharts(rows){
+      const container = document.getElementById("buildingCharts");
+      const groups = {};
+      rows.forEach(r => {
+        if (!groups[r.building]) groups[r.building] = [];
+        groups[r.building].push(r);
+      });
+
+      const cards = Object.entries(groups).sort((a,b)=>{
+        const sumA = a[1].reduce((s,x)=>s+x.areaRent,0);
+        const sumB = b[1].reduce((s,x)=>s+x.areaRent,0);
+        return sumB-sumA;
+      }).map(([building, items], idx) => {
+        const totalRentArea = items.reduce((s, x) => s + x.areaRent, 0);
+        const totalEmpty = items.reduce((s, x) => s + x.areaEmpty, 0);
+        const totalUsed = items.reduce((s, x) => s + x.areaUsed, 0);
+        const totalRentValue = items.reduce((s, x) => s + x.rent, 0);
+        const bodyId = `building_card_${idx}`;
+
+        const bars = items.slice().sort((a, b) => {
+          const isOtherA = a.floor.toLowerCase().includes("các tầng");
+          const isOtherB = b.floor.toLowerCase().includes("các tầng");
+          if (isOtherA && !isOtherB) return 1;
+          if (!isOtherA && isOtherB) return -1;
+          const numA = parseInt(a.floor.replace(/\D/g, "")) || 999;
+          const numB = parseInt(b.floor.replace(/\D/g, "")) || 999;
+          return numA - numB;
+        }).map(x => {
+          const base = x.areaRent || 1;
+          const emptyPct = (x.areaEmpty / base) * 100;
+          const usedPct = (x.areaUsed / base) * 100;
+          return `
+            <div class="floor-row">
+              <div class="floor-name">${x.floor}</div>
+              <div class="floor-bar" title="DT trống: ${formatM2(x.areaEmpty)} | DT đã thuê: ${formatM2(x.areaUsed)}">
+                <div class="floor-fill-empty" style="width:${emptyPct}%"></div>
+                <div class="floor-fill-used" style="width:${usedPct}%"></div>
+              </div>
+              <div class="floor-empty" style="color:#ea580c;">${formatM2(x.areaEmpty)}</div>
+              <div class="floor-used" style="color:#15803d;">${formatM2(x.areaUsed)}</div>
+              <div class="floor-rent">${x.rent ? formatVND(x.rent) : '-'}</div>
+            </div>
+          `;
+        }).join("");
+
+        return `
+          <div class="building-card">
+            <div class="building-card-head" onclick="toggleBuildingCard('${bodyId}', this.querySelector('.building-card-toggle'))">
+              <div>
+                <div class="building-chart-title">${formatBuildingName(building)}</div>
+                <div class="building-chart-sub">Phân bổ diện tích trống / đã thuê theo từng tầng</div>
+              </div>
+              <div class="building-card-head-right">
+                <span class="tag">Detail card</span>
+                <span class="building-card-toggle">Show</span>
+              </div>
+            </div>
+            <div class="building-card-body" id="${bodyId}" style="max-height:0;opacity:0;">
+              <div class="chart-legend" style="margin-top:12px;">
+                <span><span class="dot empty"></span> Diện tích trống</span>
+                <span><span class="dot other"></span> Diện tích đã thuê</span>
+              </div>
+              <div class="chart-note">Mỗi thanh đại diện cho một tầng. Màu cam là diện tích trống, màu xanh là diện tích đã thuê.</div>
+
+              <div class="mini-kpi-row" style="margin-top:12px;">
+                <div class="mini-kpi"><div class="mk-label">DT cho thuê</div><div class="mk-value">${formatM2(totalRentArea)}</div></div>
+                <div class="mini-kpi"><div class="mk-label">DT trống</div><div class="mk-value">${formatM2(totalEmpty)}</div></div>
+                <div class="mini-kpi"><div class="mk-label">DT đã thuê</div><div class="mk-value">${formatM2(totalUsed)}</div></div>
+                <div class="mini-kpi money-mini-kpi"><div class="mk-label">Tổng giá thuê</div><div class="mk-value">${hasFinancialAccess() ? formatVND(totalRentValue) : "Ẩn"}</div></div>
+              </div>
+
+              <div class="floor-chart">${bars}</div>
+            </div>
+          </div>
+        `;
+      });
+
+      container.innerHTML = cards.join("") || '<div class="muted">Không có dữ liệu chart.</div>';
+    }
+
+    function render(rows){
+      const tbody = document.getElementById("tbody");
+      tbody.innerHTML = "";
+
+      let tong = 0, trong = 0, daThue = 0, gia = 0, giaCount = 0, doanhthu = 0;
+      const groups = {};
+      rows.forEach(r => {
+        if (!groups[r.building]) groups[r.building] = [];
+        groups[r.building].push(r);
+      });
+
+      renderBuildingInfo(rows);
+      renderDashboard(rows);
+      renderAdvancedAllocation(rows);
+      renderBuildingCharts(rows);
+
+      Object.keys(groups).sort((a,b)=>{
+        const sumA = groups[a].reduce((s,x)=>s+x.areaRent,0);
+        const sumB = groups[b].reduce((s,x)=>s+x.areaRent,0);
+        return sumB-sumA;
+      }).forEach(building => {
+        const items = groups[building];
+        const bigNote = items.find(x => x.note && x.note !== "-");
+
+        tbody.insertAdjacentHTML("beforeend", `<tr class="building-row"><td colspan="10">${formatBuildingName(building)}</td></tr>`);
+        if (bigNote) {
+          tbody.insertAdjacentHTML("beforeend", `<tr class="note-row"><td colspan="10">📌 ${bigNote.note}</td></tr>`);
+        }
+
+        items.sort((a,b)=>{
+          const isOtherA = a.floor.toLowerCase().includes("các tầng");
+          const isOtherB = b.floor.toLowerCase().includes("các tầng");
+          if (isOtherA && !isOtherB) return 1;
+          if (!isOtherA && isOtherB) return -1;
+          const numA = parseInt(a.floor.replace(/\D/g, "")) || 999;
+          const numB = parseInt(b.floor.replace(/\D/g, "")) || 999;
+          return numA - numB;
+        }).forEach(r => {
+          tong += r.areaRent;
+          trong += r.areaEmpty;
+          daThue += r.areaUsed;
+          if (r.price > 0) { gia += r.price; giaCount += 1; }
+          doanhthu += r.rent;
+          const statusClass = r.status.toUpperCase().includes("TRỐNG") ? "status-empty" : "status-other";
+
+          tbody.insertAdjacentHTML("beforeend", `
+            <tr>
+              <td>${formatBuildingName(r.building)}</td>
+              <td>${r.floor}</td>
+              <td>${r.areaRent ? r.areaRent.toLocaleString("vi-VN") : "-"}</td>
+              <td>${r.areaEmpty ? r.areaEmpty.toLocaleString("vi-VN") : "-"}</td>
+              <td>${r.areaUsed ? r.areaUsed.toLocaleString("vi-VN") : "0"}</td>
+              <td class="money-col">${hasFinancialAccess() ? (r.price ? formatUSD(r.price) : "-") : "Ẩn"}</td>
+              <td class="promo money-col">${hasFinancialAccess() ? (r.promo ? r.promo.toLocaleString("vi-VN") + " VND" : "-") : "Ẩn"}</td>
+              <td class="money-col">${hasFinancialAccess() ? (r.fee ? formatUSD(r.fee) : "-") : "Ẩn"}</td>
+              <td class="money-col">${hasFinancialAccess() ? (r.rent ? formatVND(r.rent) : "-") : "Ẩn"}</td>
+              <td class="${statusClass}">${r.status}</td>
+            </tr>
+          `);
+        });
+      });
+
+      document.getElementById("tong").textContent = formatM2(tong);
+      document.getElementById("trong").textContent = formatM2(trong);
+      document.getElementById("dathue").textContent = formatM2(daThue);
+      document.getElementById("gia").textContent = hasFinancialAccess() ? ((giaCount ? (gia / giaCount).toFixed(1) : "0") + " USD/m²") : "Ẩn";
+      document.getElementById("doanhthu").textContent = hasFinancialAccess() ? formatVND(doanhthu) : "Ẩn";
+      applyRoleVisibility();
+    }
+
+
+
+    function toggleBuildingCard(bodyId, btnEl){
+      const body = document.getElementById(bodyId);
+      if (!body) return;
+      const isOpen = body.classList.contains("open");
+      if (isOpen) {
+        body.style.maxHeight = body.scrollHeight + "px";
+        requestAnimationFrame(() => {
+          body.style.maxHeight = "0px";
+          body.style.opacity = "0";
+          body.classList.remove("open");
+        });
+        if (btnEl) btnEl.textContent = "Show";
+      } else {
+        body.classList.add("open");
+        body.style.maxHeight = body.scrollHeight + "px";
+        body.style.opacity = "1";
+        if (btnEl) btnEl.textContent = "Hide";
+      }
+    }
+
+    function toggleSimpleSection(bodyId, btnId){
+      const body = document.getElementById(bodyId);
+      const btn = document.getElementById(btnId);
+      if (!body || !btn) return;
+      const isOpen = body.classList.contains("open");
+      if (isOpen) {
+        body.style.maxHeight = body.scrollHeight + "px";
+        requestAnimationFrame(() => {
+          body.style.maxHeight = "0px";
+          body.style.opacity = "0";
+          body.classList.remove("open");
+        });
+        btn.textContent = "Show";
+      } else {
+        body.classList.add("open");
+        body.style.maxHeight = body.scrollHeight + "px";
+        body.style.opacity = "1";
+        btn.textContent = "Hide";
+      }
+    }
+
+
+    function toggleFloorGroup(groupId, headerEl){
+      const body = document.getElementById(groupId);
+      if (!body) return;
+      const btn = headerEl.querySelector(".floor-group-toggle");
+      const isOpen = body.classList.contains("open");
+
+      if (isOpen) {
+        body.style.maxHeight = body.scrollHeight + "px";
+        requestAnimationFrame(() => {
+          body.style.maxHeight = "0px";
+          body.style.opacity = "0";
+          body.classList.remove("open");
+        });
+        if (btn) btn.textContent = "Show";
+      } else {
+        body.classList.add("open");
+        body.style.display = "block";
+        body.style.maxHeight = body.scrollHeight + "px";
+        body.style.opacity = "1";
+        if (btn) btn.textContent = "Hide";
+      }
+    }
+
+    document.getElementById("refreshBtn").addEventListener("click", () => {
+      if (!requireAuth("refresh")) return;
+      loadData();
+    });
+    document.getElementById("buildingAllocationToggle").addEventListener("click", () => toggleSimpleSection("buildingAllocationBody", "buildingAllocationToggle"));
+    document.getElementById("tabLogin").addEventListener("click", () => showTab("login"));
+    document.getElementById("manageUsersBtn").addEventListener("click", () => {
+      if (!requireAuth("openUserPanel")) return;
+      document.getElementById("userManagementPanel").scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+    document.getElementById("logoutBtn").addEventListener("click", () => {
+      clearSession();
+      updateAuthUI();
+      showTab("login");
+    });
+    document.getElementById("loginForm").addEventListener("submit", (e) => {
+      e.preventDefault();
+      const username = document.getElementById("loginUsername").value.trim();
+      const password = document.getElementById("loginPassword").value;
+      const user = findUser(username);
+      if (!user || user.password !== password) {
+        setAuthMessage("error", "Sai tên đăng nhập hoặc mật khẩu.");
+        return;
+      }
+      if (!user.active) {
+        setAuthMessage("error", "Tài khoản này đã bị khóa.");
+        return;
+      }
+      setSession(username);
+      document.getElementById("loginForm").reset();
+      setAuthMessage("success", "Đăng nhập thành công.");
+      updateAuthUI();
+      loadData();
+    });
+
+    function adminCreateUser(){
+      if (!requireAuth("createUser")) return;
+      const fullName = document.getElementById("adminCreateFullname").value.trim();
+      const username = document.getElementById("adminCreateUsername").value.trim();
+      const password = document.getElementById("adminCreatePassword").value;
+      const role = document.getElementById("adminCreateRole").value;
+      if (username.length < 4) return alert("Tên đăng nhập phải có ít nhất 4 ký tự.");
+      if (password.length < 6) return alert("Mật khẩu phải có ít nhất 6 ký tự.");
+      if (findUser(username)) return alert("Tên đăng nhập đã tồn tại.");
+      const users = getUsers();
+      users.push({
+        id: "u_" + Date.now(),
+        fullName,
+        username,
+        password,
+        role,
+        active: true,
+        createdAt: new Date().toISOString()
+      });
+      saveUsers(users);
+      document.getElementById("adminCreateFullname").value = "";
+      document.getElementById("adminCreateUsername").value = "";
+      document.getElementById("adminCreatePassword").value = "";
+      document.getElementById("adminCreateRole").value = "viewer";
+      renderUsersTable();
+      alert("Đã tạo tài khoản mới.");
+    }
+
+    document.getElementById("adminCreateUserBtn").addEventListener("click", adminCreateUser);
+
+    seedDefaultAdmin();
+    updateAuthUI();
+    if (currentUser) loadData();
+    window.drilldownToBuilding = drilldownToBuilding;
+    window.updateUserRole = updateUserRole;
+    window.toggleUserActive = toggleUserActive;
+    window.changeUserPassword = changeUserPassword;
+  </script>
+</body>
+</html>
